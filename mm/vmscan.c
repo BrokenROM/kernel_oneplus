@@ -3127,22 +3127,6 @@ static int __devinit cpu_callback(struct notifier_block *nfb,
 	return NOTIFY_OK;
 }
 
-static int set_kswapd_cpu_mask(pg_data_t *pgdat)
-{
-	int ret = 0;
-	cpumask_t tmask;
-
-	if (!kswapd_cpu_mask)
-		return 0;
-
-	cpus_clear(tmask);
-	ret = cpumask_parse(kswapd_cpu_mask, &tmask);
-	if (ret)
-		return ret;
-
-	return set_cpus_allowed_ptr(pgdat->kswapd, &tmask);
-}
-
 /*
  * This kswapd start function will be called by init and node-hot-add.
  * On node-hot-add, kswapd will moved to proper cpus if cpus are hot-added.
@@ -3161,9 +3145,6 @@ int kswapd_run(int nid)
 		BUG_ON(system_state == SYSTEM_BOOTING);
 		printk("Failed to start kswapd on node %d\n",nid);
 		ret = -1;
-	} else if (kswapd_cpu_mask) {
-		if (set_kswapd_cpu_mask(pgdat))
-			pr_warn("error setting kswapd cpu affinity mask\n");
 	}
 	return ret;
 }
