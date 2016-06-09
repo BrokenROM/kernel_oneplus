@@ -433,3 +433,4 @@ obj-$(CONFIG_ALUCARD_HOTPLUG) += alucard_hotplug.o
 obj-$(CONFIG_CHARGE_LEVEL) += charge_level.o
 obj-$(CONFIG_MSM_SLEEPER)     += msm-sleeper.o
 obj-$(CONFIG_THUNDERPLUG_CONTROL) += thunderplug.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
