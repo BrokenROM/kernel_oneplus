@@ -92,8 +92,8 @@ enum mgr_intr {
 
 enum frm_cfg {
 	FRM_ACTIVE	= 1,
-	CLK_GEAR	= 7,
-	ROOT_FREQ	= 11,
+	CLK_GEAR	= 10,
+	ROOT_FREQ	= 31,
 	REF_CLK_GEAR	= 15,
 	INTR_WAKE	= 19,
 };
@@ -207,7 +207,7 @@ static irqreturn_t msm_slim_interrupt(int irq, void *d)
 		 * signalling completion/exiting ISR
 		 */
 		mb();
-		msm_slim_manage_tx_msgq(dev, false, NULL);
+		msm_slim_manage_tx_msgq(dev, false, NULL, dev->err);
 	}
 	if (stat & MGR_INT_RX_MSG_RCVD) {
 		u32 rx_buf[10];
@@ -418,7 +418,7 @@ static int msm_xfer_msg(struct slim_controller *ctrl, struct slim_msg_txn *txn)
 			 * Only disable port
 			 */
 			writel_relaxed(0, PGD_PORT(PGD_PORT_CFGn,
-					(*puc + dev->port_b), dev->ver));
+					dev->pipes[*puc].port_b, dev->ver));
 			mutex_unlock(&dev->tx_lock);
 			if (msgv >= 0)
 				msm_slim_put_ctrl(dev);
@@ -431,7 +431,7 @@ static int msm_xfer_msg(struct slim_controller *ctrl, struct slim_msg_txn *txn)
 				msm_slim_put_ctrl(dev);
 			return dev->err;
 		}
-		*(puc) = *(puc) + dev->port_b;
+		*(puc) = (u8)dev->pipes[*puc].port_b;
 	}
 	if (txn->mt == SLIM_MSG_MT_CORE &&
 		mc == SLIM_MSG_MC_BEGIN_RECONFIGURATION)

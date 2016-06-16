@@ -35,6 +35,15 @@
 #include "clock-krait.h"
 #include "clock.h"
 
+#ifdef CONFIG_PVS_LEVEL_INTERFACE
+int pvs_level = -1;
+module_param(pvs_level, int, S_IRUGO); 
+#endif
+#ifdef CONFIG_SPEED_LEVEL_INTERFACE
+int speed_level = -1;
+module_param(speed_level, int, S_IRUGO);
+#endif
+
 /* Clock inputs coming into Krait subsystem */
 DEFINE_FIXED_DIV_CLK(hfpll_src_clk, 1, NULL);
 DEFINE_FIXED_DIV_CLK(acpu_aux_clk, 2, NULL);
@@ -491,6 +500,10 @@ static void get_krait_bin_format_b(struct platform_device *pdev,
 		}
 	}
 
+#ifdef CONFIG_SPEED_LEVEL_INTERFACE
+        speed_level = *speed;
+#endif
+
 	/* Check PVS_BLOW_STATUS */
 	pte_efuse = readl_relaxed(base + 0x4) & BIT(21);
 	if (pte_efuse) {
@@ -503,6 +516,10 @@ static void get_krait_bin_format_b(struct platform_device *pdev,
 		*pvs = 0;
 		*svs_pvs = -1;
 	}
+
+#ifdef CONFIG_PVS_LEVEL_INTERFACE
+	pvs_level = *pvs;
+#endif
 
 	dev_info(&pdev->dev, "PVS version: %d\n", *pvs_ver);
 
@@ -708,9 +725,9 @@ static int clock_krait_8974_driver_probe(struct platform_device *pdev)
 	struct device *dev = &pdev->dev;
 	struct clk *c;
 	int speed, pvs, svs_pvs, pvs_ver, config_ver, rows, cpu, svs_row = 0;
-	unsigned long *freq, *svs_freq, cur_rate, aux_rate;
-	int *uv, *ua, *svs_uv, *svs_ua;
-	u32 *dscr, vco_mask, config_val, svs_fmax;
+	unsigned long *freq = 0, *svs_freq = 0, cur_rate, aux_rate;
+	int *uv = 0, *ua = 0, *svs_uv = 0, *svs_ua = 0;
+	u32 *dscr = 0, vco_mask, config_val, svs_fmax;
 	int ret;
 
 	vdd_l2.regulator[0] = devm_regulator_get(dev, "l2-dig");

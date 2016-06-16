@@ -19,6 +19,7 @@ struct rq_data {
 	unsigned long rq_poll_total_jiffies;
 	unsigned long def_timer_last_jiffy;
 	unsigned int hotplug_disabled;
+	unsigned int hotplug_enabled;
 	int64_t def_start_time;
 	struct attribute_group *attr_group;
 	struct kobject *kobj;
@@ -29,3 +30,5 @@ struct rq_data {
 extern spinlock_t rq_lock;
 extern struct rq_data rq_info;
 extern struct workqueue_struct *rq_wq;
+
+extern void enable_rq_load_calc(bool on);

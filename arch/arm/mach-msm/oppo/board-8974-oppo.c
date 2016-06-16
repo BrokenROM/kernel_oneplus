@@ -55,6 +55,13 @@
 
 #include <linux/pcb_version.h>
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+#include <asm/setup.h>
+#include <asm/memory.h>
+#include <linux/memblock.h>
+#define OPPO_PERSISTENT_RAM_SIZE	(SZ_1M)
+#endif
+
 static struct platform_device *ram_console_dev;
 
 static struct persistent_ram_descriptor msm_prd[] __initdata = {
@@ -73,6 +80,26 @@ static struct persistent_ram msm_pr __initdata = {
 
 void __init msm_8974_reserve(void)
 {
+#ifdef CONFIG_KEXEC_HARDBOOT
+	// Reserve space for hardboot page - just after ram_console,
+	// at the start of second memory bank
+	int ret;
+	phys_addr_t start;
+	struct membank* bank;
+	
+	if (meminfo.nr_banks < 2) {
+		pr_err("%s: not enough membank\n", __func__);
+		return;
+	}
+	
+	bank = &meminfo.bank[1];
+	start = bank->start + SZ_1M + OPPO_PERSISTENT_RAM_SIZE;
+	ret = memblock_remove(start, SZ_1M);
+	if(!ret)
+		pr_info("Hardboot page reserved at 0x%X\n", start);
+	else
+		pr_err("Failed to reserve space for hardboot page at 0x%X!\n", start);
+#endif
 	persistent_ram_early_init(&msm_pr);
 	of_scan_flat_dt(dt_scan_for_memory_reserve, NULL);
 }
@@ -97,7 +124,6 @@ void __init msm8974_add_drivers(void)
 	else
 		msm_clock_init(&msm8974_clock_init_data);
 	tsens_tm_init_driver();
-	msm_thermal_device_init();
 }
 
 #define DISP_ESD_GPIO 28

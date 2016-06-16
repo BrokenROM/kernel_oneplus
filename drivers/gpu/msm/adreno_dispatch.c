@@ -252,10 +252,15 @@ static struct kgsl_cmdbatch *_get_cmdbatch(struct adreno_context *drawctxt)
 			pending = true;
 	}
 
-	spin_lock(&cmdbatch->lock);
+	/*
+	 * We may have cmdbatch timer running, which also uses same lock,
+	 * take a lock with software interrupt disabled (bh) to avoid
+	 * spin lock recursion.
+	 */
+	spin_lock_bh(&cmdbatch->lock);
 	if (!list_empty(&cmdbatch->synclist))
 		pending = true;
-	spin_unlock(&cmdbatch->lock);
+	spin_unlock_bh(&cmdbatch->lock);
 
 	/*
 	 * If changes are pending and the canary timer hasn't been

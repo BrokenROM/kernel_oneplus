@@ -678,6 +678,7 @@
 			qcom,cdc-slim-ifd = "taiko-slim-ifd";
 			qcom,cdc-slim-ifd-elemental-addr = [00 00 A0 00 17 02];
 			qcom,cdc-dmic-sample-rate = <4800000>;
+			qcom,cdc-mad-dmic-rate = <4800000>;
 		};
 	};
 
@@ -1445,16 +1446,17 @@
 		compatible = "qcom,cpubw";
 		qcom,cpu-mem-ports = <1 512>, <2 512>;
 		qcom,bw-tbl =
-			<  381 /*  50 MHz */ >,
-			<  572 /*  75 MHz */ >,
-			<  762 /* 100 MHz */ >,
-			< 1144 /* 150 MHz */ >,
-			< 1525 /* 200 MHz */ >,
-			< 2342 /* 307 MHz */ >,
-			< 3509 /* 460 MHz */ >,
-			< 4684 /* 614 MHz */ >,
-			< 6103 /* 800 MHz */ >,
-			< 7102 /* 931 MHz */ >;
+			<  381 /*  50 MHz */  >,
+			<  572 /*  75 MHz */  >,
+			<  762 /* 100 MHz */  >,
+			< 1144 /* 150 MHz */  >,
+			< 1525 /* 200 MHz */  >,
+			< 2342 /* 307 MHz */  >,
+			< 3509 /* 460 MHz */  >,
+			< 4684 /* 614 MHz */  >,
+			< 6103 /* 800 MHz */  >,
+			< 7102 /* 931 MHz */  >,
+			< 7674 /* 1006 MHz */ >;
 	};
 
 	qcom,kraitbw-l2pm {
@@ -1467,21 +1469,36 @@
 		reg = <0 4>;
 		compatible = "qcom,msm-cpufreq";
 		qcom,cpufreq-table =
-			<  300000  300000  572 >,
-			<  422400  422400 1144 >,
+			<  268800  268800  381 >,
+			<  300000  268800  381 >,
+                        <  345600  345600  381 >,
+			<  422400  422400  572 >,
+                        <  499200  422400  762 >,
+			<  576000  499200 1144 >,
 			<  652800  499200 1525 >,
 			<  729600  576000 2342 >,
+                        <  806400  576000 2342 >,
 			<  883200  576000 2342 >,
 			<  960000  960000 3509 >,
 			< 1036800 1036800 3509 >,
+                        < 1113600 1036800 3509 >,
 			< 1190400 1036800 3509 >,
 			< 1267200 1267200 4684 >,
+			< 1344000 1267200 4684 >,
+			< 1420800 1420800 4684 >,
 			< 1497600 1497600 4684 >,
 			< 1574400 1574400 6103 >,
+                        < 1651200 1651200 6103 >,
 			< 1728000 1651200 6103 >,
+                        < 1804800 1651200 6103 >,
+			< 1881600 1728000 7102 >,
 			< 1958400 1728000 7102 >,
+                        < 2035200 1728000 7102 >,
+                        < 2188800 1728000 7102 >,
 			< 2265600 1728000 7102 >,
-			< 2457600 1728000 7102 >;
+			< 2342400 1728000 7102 >,
+                        < 2419200 1728000 7102 >,
+			< 2457600 1728000 7674 >;
 	};
 
 	usb3: qcom,ssusb@f9200000 {
@@ -1961,6 +1978,7 @@
 				<55 512 0 0>,
 				<55 512 120000 1200000>,
 				<55 512 393600 3936000>;
+		qcom,ce-opp-freq = <100000000>;
 	};
 
 	qcom,wdt@f9017000 {
@@ -2160,13 +2178,13 @@
 		compatible = "qcom,msm-thermal";
 		qcom,sensor-id = <5>;
 		qcom,poll-ms = <250>;
-		qcom,limit-temp = <70>;
-		qcom,temp-hysteresis = <5>;
+		qcom,limit-temp = <60>;
+		qcom,temp-hysteresis = <10>;
 		qcom,therm-reset-temp = <115>;
 		qcom,freq-step = <2>;
 		qcom,freq-control-mask = <0xf>;
-		qcom,core-limit-temp = <90>;
-		qcom,core-temp-hysteresis = <5>;
+		qcom,core-limit-temp = <80>;
+		qcom,core-temp-hysteresis = <10>;
 		qcom,core-control-mask = <0xe>;
 		qcom,hotplug-temp = <110>;
 		qcom,hotplug-temp-hysteresis = <20>;
@@ -2178,8 +2196,8 @@
 		qcom,freq-mitigation-control-mask = <0x01>;
 		qcom,vdd-restriction-temp = <5>;
 		qcom,vdd-restriction-temp-hysteresis = <10>;
-		qcom,pmic-sw-mode-temp = <90>;
-		qcom,pmic-sw-mode-temp-hysteresis = <85>;
+		qcom,pmic-sw-mode-temp = <85>;
+		qcom,pmic-sw-mode-temp-hysteresis = <75>;
 		qcom,pmic-sw-mode-regs = "vdd-dig";
 		vdd-dig-supply = <&pm8841_s2_floor_corner>;
 		vdd-gfx-supply = <&pm8841_s4_floor_corner>;
@@ -2198,7 +2216,7 @@
 
 		qcom,vdd-apps-rstr{
 			qcom,vdd-rstr-reg = "vdd-apps";
-			qcom,levels = <1728000 1958400 2265600 2342400 2419200 2457600>;
+			qcom,levels = <1881600 1958400 2265600>;
 			qcom,freq-req;
 		};
 	};
