@@ -3086,7 +3086,7 @@ config SPEED_LEVEL_INTERFACE
 
 config MSM_LIMITER
 	bool "MSM Frequency Limiter Driver"
-	default y
+	default n
 	help
 	  The MSM Frequency Limiter Driver controls max frequency limit for each CPU
 	  to desired value on suspend/resume
@@ -3094,7 +3094,7 @@ config MSM_LIMITER
 config MSM_HOTPLUG
 	bool "MSM hotplug driver"
 	depends on HOTPLUG_CPU
-	default y
+	default n
 	help
 	  The MSM hotplug driver controls on-/offlining of additional cores based
 	  on current cpu load.
@@ -3102,28 +3102,28 @@ config MSM_HOTPLUG
 config INTELLI_HOTPLUG
 	bool "Intelli hotplug driver"
 	depends on HOTPLUG_CPU
-	default y
+	default n
 	help
 	  An intelligent cpu hotplug driver for
 	  Low Latency Frequency Transition capable processors.
 
 config ALUCARD_HOTPLUG
 	bool "Enable alucard-hotplug cpu hotplug driver"
-	default y
+	default n
 	help
 	  Generic Alucard-hotplug cpu hotplug driver for ARM SOCs
 
 config BRICKED_HOTPLUG
 	bool "Enable kernel based mpdecision"
 	depends on MSM_RUN_QUEUE_STATS
-	default y
+	default n
 	help
 	  This enables kernel based multi core control.
 	  (up/down hotplug based on load)
 
 config MSM_SLEEPER
 	bool "CPU hotplug driver"
-	default y
+	default n
 	help
 	  CPU hotplug driver
 
