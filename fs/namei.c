@@ -48,8 +48,8 @@
  * The new code replaces the old recursive symlink resolution with
  * an iterative one (in case of non-nested symlink chains).  It does
  * this with calls to <fs>_follow_link().
- * As a side effect, dir_namei(), _namei() and follow_link() are now 
- * replaced with a single function lookup_dentry() that can handle all 
+ * As a side effect, dir_namei(), _namei() and follow_link() are now
+ * replaced with a single function lookup_dentry() that can handle all
  * the special cases of the former code.
  *
  * With the new dcache, the pathname is stored at each inode, at least as
@@ -1557,7 +1557,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 {
 	struct path next;
 	int err;
-	
+
 	while (*name=='/')
 		name++;
 	if (!*name)
@@ -1623,7 +1623,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
 		}
 		if (can_lookup(nd->inode))
 			continue;
-		err = -ENOTDIR; 
+		err = -ENOTDIR;
 		break;
 		/* here ends the main loop */
 
@@ -2798,7 +2798,7 @@ out:
 static long do_rmdir(int dfd, const char __user *pathname)
 {
 	int error = 0;
-	char * name = NULL;
+	char *name = getname(pathname);
 	struct dentry *dentry;
 	struct nameidata nd;
 
@@ -2893,7 +2893,7 @@ int vfs_unlink(struct inode *dir, struct dentry *dentry)
  */
 static long do_unlinkat(int dfd, const char __user *pathname)
 {
-	int error = 0;
+	int error;
 	char *name = NULL;
 	struct dentry *dentry;
 	struct nameidata nd;
@@ -2986,7 +2986,7 @@ SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
 		int, newdfd, const char __user *, newname)
 {
 	int error;
-	char *from;
+	char *from = NULL;
 	struct dentry *dentry;
 	struct path path;
 
@@ -3258,7 +3258,7 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 
 	if (old_dentry->d_inode == new_dentry->d_inode)
  		return 0;
- 
+
 	error = may_delete(old_dir, old_dentry, is_dir);
 	if (error)
 		return error;
